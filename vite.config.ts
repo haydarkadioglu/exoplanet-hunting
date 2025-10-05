@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 
 export default defineConfig({
+  base: '/exoplanet-hunting/',
   root: '.',
   build: {
     outDir: 'dist',
