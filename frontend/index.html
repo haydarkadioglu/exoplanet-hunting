@@ -111,7 +111,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px; /* Increased from 1200px */
             margin: 0 auto;
             padding: 0 20px;
         }
@@ -122,9 +122,16 @@
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             padding: 1rem 0;
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .header.hidden {
+            transform: translateY(-100%);
         }
         
         .header-content {
@@ -179,6 +186,7 @@
         /* Main Content */
         .main-content {
             padding: 2rem 0;
+            padding-top: 120px; /* Space for fixed header */
             min-height: calc(100vh - 140px);
         }
         
@@ -278,8 +286,80 @@
             border-radius: 15px;
             padding: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            max-width: 800px;
-            margin: 0 auto;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 1rem;
+        }
+
+        .result-header h3 {
+            margin-bottom: 0.5rem;
+            color: #00c9ff;
+        }
+
+        .result-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Desktop Layout */
+        @media (min-width: 1024px) {
+            .prediction-container {
+                display: grid;
+                grid-template-columns: 1fr 400px;
+                gap: 2rem;
+                max-width: 1400px;
+                margin: 0 auto;
+            }
+            
+            .input-area {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 15px;
+                padding: 2rem;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+            
+            .result-area {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 15px;
+                padding: 2rem;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                position: sticky;
+                top: 140px;
+                height: fit-content;
+                max-height: calc(100vh - 180px);
+                overflow-y: auto;
+            }
+        }
+
+        /* Mobile Layout */
+        @media (max-width: 1023px) {
+            .prediction-container {
+                max-width: 800px;
+                margin: 0 auto;
+            }
+            
+            .input-area {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 15px;
+                padding: 2rem;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                margin-bottom: 2rem;
+            }
+            
+            .result-area {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border-radius: 15px;
+                padding: 2rem;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
         }
 
         .prediction-header {
@@ -505,6 +585,56 @@
         }
         
         /* Sample Buttons */
+        .auto-fill-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 201, 255, 0.2);
+        }
+
+        .auto-fill-section h5 {
+            margin-bottom: 1rem;
+            color: #00c9ff;
+            font-size: 1rem;
+        }
+
+        .auto-fill-buttons {
+            display: grid;
+            gap: 1rem;
+        }
+
+        @media (min-width: 1024px) {
+            .auto-fill-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1023px) {
+            .auto-fill-buttons {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        .auto-fill-btn {
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(0, 201, 255, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .auto-fill-btn:hover {
+            transform: translateY(-2px);
+            border-color: #00c9ff;
+            background: rgba(0, 201, 255, 0.2);
+            box-shadow: 0 10px 20px rgba(0, 201, 255, 0.3);
+        }
+
         .samples-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -672,11 +802,23 @@
 
         /* Prediction Result Styles */
         .prediction-result {
-            background: rgba(255, 255, 255, 0.05);
             border-radius: 15px;
-            padding: 2rem;
-            margin-top: 2rem;
+            padding: 1.5rem;
             text-align: center;
+        }
+
+        @media (min-width: 1024px) {
+            .prediction-result {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        @media (max-width: 1023px) {
+            .prediction-result {
+                background: rgba(255, 255, 255, 0.05);
+                margin-top: 2rem;
+            }
         }
 
         .prediction-value {
@@ -776,6 +918,10 @@
             .github-link {
                 padding: 0.6rem 1rem;
                 font-size: 0.85rem;
+            }
+
+            .main-content {
+                padding-top: 140px; /* More space for mobile header */
             }
 
             .hero h1 {
@@ -941,67 +1087,69 @@
             </div>
 
             <!-- Prediction Area -->
-            <div class="prediction-area">
-                <div class="prediction-header">
-                    <h3>🔮 Exoplanet Prediction</h3>
-                    <div class="current-model-info">
-                        <h4 id="current-model-name">TESS Model</h4>
-                        <div class="model-metrics">
-                            <div class="metric-item">
-                                <div class="metric-value" id="model-accuracy">89.94%</div>
-                                <div class="metric-label">Accuracy</div>
+            <div class="prediction-container">
+                <div class="input-area">
+                    <div class="prediction-header">
+                        <h3>🔮 Exoplanet Prediction</h3>
+                        <div class="current-model-info">
+                            <h4 id="current-model-name">TESS Model</h4>
+                            <div class="model-metrics">
+                                <div class="metric-item">
+                                    <div class="metric-value" id="model-accuracy">89.94%</div>
+                                    <div class="metric-label">Accuracy</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-value" id="model-precision">85.64%</div>
+                                    <div class="metric-label">Precision</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-value" id="model-recall">89.27%</div>
+                                    <div class="metric-label">Recall</div>
+                                </div>
                             </div>
-                            <div class="metric-item">
-                                <div class="metric-value" id="model-precision">85.64%</div>
-                                <div class="metric-label">Precision</div>
-                            </div>
-                            <div class="metric-item">
-                                <div class="metric-value" id="model-recall">89.27%</div>
-                                <div class="metric-label">Recall</div>
-                            </div>
+                            <button id="show-confusion-matrix" class="confusion-matrix-btn">
+                                📊 Show Confusion Matrix
+                            </button>
                         </div>
-                        <button id="show-confusion-matrix" class="confusion-matrix-btn">
-                            📊 Show Confusion Matrix
-                        </button>
+                    </div>
+
+                    <div class="input-section">
+                        <div class="manual-input active">
+                            <h4>📝 Manual Data Input</h4>
+                            <div class="auto-fill-section">
+                                <h5>🎯 Quick Fill Options:</h5>
+                                <div class="auto-fill-buttons">
+                                    <button class="auto-fill-btn" data-type="confirmed">
+                                        ✅ Confirmed Exoplanet Data
+                                    </button>
+                                    <button class="auto-fill-btn" data-type="candidate">
+                                        🔍 Candidate Data
+                                    </button>
+                                    <button class="auto-fill-btn" data-type="false-positive">
+                                        ❌ False Positive Data
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="manual-form-container">
+                                <!-- Dynamic form will be loaded here based on selected model -->
+                            </div>
+                            <button id="manual-predict">🔮 Predict</button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="input-section">
-                    <div class="input-toggle">
-                        <button class="toggle-btn" data-type="sample">📊 Sample Data</button>
-                        <button class="toggle-btn active" data-type="manual">✏️ Manual Input</button>
+                <div class="result-area">
+                    <div class="result-header">
+                        <h3>🎯 Prediction Results</h3>
+                        <div class="result-subtitle">AI classification output will appear here</div>
                     </div>
-
-                    <div class="sample-data">
-                        <h4>🎯 Sample Test Data</h4>
-                        <div class="samples-grid">
-                            <button class="sample-btn" data-type="planet">
-                                🪐 Exoplanet Sample
-                            </button>
-                            <button class="sample-btn" data-type="star">
-                                ⭐ Star Sample
-                            </button>
-                            <button class="sample-btn" data-type="noise">
-                                📡 Noise Sample
-                            </button>
+                    <div class="prediction-result" id="prediction-result">
+                        <div class="result-content">
+                            <div class="prediction-icon">🤖</div>
+                            <h4>AI Analysis</h4>
+                            <div class="prediction-value">Select model and input data to predict</div>
+                            <div class="confidence-score"></div>
                         </div>
-                    </div>
-
-                    <div class="manual-input active">
-                                                <h4>📝 Manual Data Input</h4>
-                        <div id="manual-form-container">
-                            <!-- Dynamic form will be loaded here based on selected model -->
-                        </div>
-                        <button id="manual-predict">🔮 Predict</button>
-                    </div>
-                </div>
-
-                <div class="prediction-result" id="prediction-result">
-                    <div class="result-content">
-                        <div class="prediction-icon">🤖</div>
-                        <h4>AI Tahmini</h4>
-                        <div class="prediction-value">Select model and input data to predict</div>
-                        <div class="confidence-score"></div>
                     </div>
                 </div>
             </div>
