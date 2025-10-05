@@ -1,0 +1,32 @@
+{
+  "string_to_numeric": {
+    "Confirmed_Planet": 0,
+    "False_Positive": 1,
+    "Planet_Candidate": 2
+  },
+  "numeric_to_string": {
+    "0": "Confirmed_Planet",
+    "1": "False_Positive",
+    "2": "Planet_Candidate"
+  },
+  "class_names": [
+    "Confirmed_Planet",
+    "False_Positive",
+    "Planet_Candidate"
+  ],
+  "n_classes": 3,
+  "class_grouping": {
+    "Confirmed_Planet": [
+      "CP",
+      "KP"
+    ],
+    "Planet_Candidate": [
+      "PC",
+      "APC"
+    ],
+    "False_Positive": [
+      "FP",
+      "FA"
+    ]
+  }
+}
