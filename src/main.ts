@@ -578,7 +578,82 @@ class ExoplanetClassifier {
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
+  createStarfield();
   new ExoplanetClassifier();
 });
+
+// Create animated starfield background
+function createStarfield() {
+  const starfield = document.getElementById('starfield');
+  if (!starfield) return;
+
+  // Create static stars
+  for (let i = 0; i < 200; i++) {
+    const star = document.createElement('div');
+    star.className = `star ${getRandomStarSize()}`;
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 3 + 's';
+    starfield.appendChild(star);
+  }
+
+  // Create moving stars
+  for (let i = 0; i < 20; i++) {
+    const star = document.createElement('div');
+    star.className = `star ${getRandomStarSize()} moving`;
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 20 + 's';
+    star.style.animationDuration = (15 + Math.random() * 10) + 's';
+    starfield.appendChild(star);
+  }
+
+  // Create shooting stars
+  for (let i = 0; i < 3; i++) {
+    const shootingStar = document.createElement('div');
+    shootingStar.className = 'shooting-star';
+    shootingStar.style.top = Math.random() * 50 + '%';
+    shootingStar.style.left = '-100px';
+    shootingStar.style.animationDelay = Math.random() * 10 + 's';
+    shootingStar.style.animationDuration = (2 + Math.random() * 2) + 's';
+    starfield.appendChild(shootingStar);
+  }
+
+  // Create floating particles
+  for (let i = 0; i < 15; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    particle.style.width = (2 + Math.random() * 3) + 'px';
+    particle.style.height = particle.style.width;
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.top = Math.random() * 100 + '%';
+    particle.style.animationDelay = Math.random() * 6 + 's';
+    particle.style.animationDuration = (4 + Math.random() * 4) + 's';
+    starfield.appendChild(particle);
+  }
+
+  // Continuously add new shooting stars
+  setInterval(() => {
+    const shootingStar = document.createElement('div');
+    shootingStar.className = 'shooting-star';
+    shootingStar.style.top = Math.random() * 50 + '%';
+    shootingStar.style.left = '-100px';
+    shootingStar.style.animationDuration = (2 + Math.random() * 2) + 's';
+    starfield.appendChild(shootingStar);
+
+    // Remove shooting star after animation
+    setTimeout(() => {
+      if (starfield.contains(shootingStar)) {
+        starfield.removeChild(shootingStar);
+      }
+    }, 5000);
+  }, 8000 + Math.random() * 12000); // Random interval between 8-20 seconds
+}
+
+function getRandomStarSize(): string {
+  const rand = Math.random();
+  if (rand < 0.6) return 'small';
+  if (rand < 0.9) return 'medium';
+  return 'large';
+}
 
 export { ExoplanetClassifier };
