@@ -1,109 +1,36 @@
-name: Deploy to GitHub Pagesname: Deploy to GitHub Pagesname: Deploy to GitHub Pages
+﻿name: Deploy to GitHub Pages
 
-
-
-on:    - name: Deploy to GitHub Pages 🚀
-
+on:
   push:
+    branches: [ main ]
 
-    branches: [ main ]on:      uses: peaceiris/actions-gh-pages@v4
-
-
-
-permissions:  push:      with:
-
+permissions:
   contents: read
-
-  pages: write    branches: [ main ]        github_token: ${{ secrets.GITHUB_TOKEN }}
-
+  pages: write
   id-token: write
 
-        publish_dir: ./dist
-
 jobs:
-
-  build-and-deploy:permissions:  push:
-
+  build-and-deploy:
     runs-on: ubuntu-latest
-
-      contents: read    branches: [ main ]
-
+    
     steps:
-
-    - name: Checkout 🛎️  pages: write
-
+    - name: Checkout
       uses: actions/checkout@v4
-
-        id-token: writepermissions:
-
-    - name: Setup Node.js 📦
-
-      uses: actions/setup-node@v4  contents: read
-
-      with:
-
-        node-version: '20'jobs:  pages: write
-
-        cache: 'npm'
-
-          build-and-deploy:  id-token: write
-
-    - name: Install dependencies 🔧
-
-      run: npm ci    runs-on: ubuntu-latest
-
       
-
-    - name: Build 🏗️    jobs:
-
-      run: npm run build
-
-          steps:  build-and-deploy:
-
-    - name: Deploy to GitHub Pages 🚀
-
-      uses: peaceiris/actions-gh-pages@v4    - name: Checkout 🛎️    runs-on: ubuntu-latest
-
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
       with:
-
-        github_token: ${{ secrets.GITHUB_TOKEN }}      uses: actions/checkout@v4    
-
-        publish_dir: ./dist
-          steps:
-
-    - name: Setup Node.js 📦    - name: Checkout 🛎️
-
-      uses: actions/setup-node@v4      uses: actions/checkout@v4
-
-      with:      
-
-        node-version: '20'    - name: Setup Node.js 📦
-
-        cache: 'npm'      uses: actions/setup-node@v4
-
-              with:
-
-    - name: Install dependencies 🔧        node-version: '20'
-
-      run: npm ci        cache: 'npm'
-
-              
-
-    - name: Build 🏗️    - name: Install dependencies 🔧
-
-      run: npm run build      run: npm ci
-
-            
-
-    - name: Deploy to GitHub Pages 🚀    - name: Build 🏗️
-
-      uses: peaceiris/actions-gh-pages@v4      run: npm run build
-
-      with:      
-
-        github_token: ${{ secrets.GITHUB_TOKEN }}    - name: Deploy to GitHub Pages �
-
-        publish_dir: ./dist      uses: peaceiris/actions-gh-pages@v3
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build
+      run: npm run build
+      
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
