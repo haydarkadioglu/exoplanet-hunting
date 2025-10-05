@@ -46,14 +46,22 @@ class ExoplanetClassifier {
   }
 
   private async init() {
+    console.log('Initializing ExoplanetClassifier...');
+    
     // Load all models in parallel
     const loadPromises = Object.keys(this.models).map(modelName => 
       this.loadModel(modelName)
     );
     
     await Promise.allSettled(loadPromises);
-    this.setupEventListeners();
-    this.updateModelInfo('tess'); // Default to TESS
+    console.log('Models loaded, setting up event listeners...');
+    
+    // Use setTimeout to ensure DOM is ready
+    setTimeout(() => {
+      this.setupEventListeners();
+      this.updateModelInfo('tess'); // Default to TESS
+      console.log('Initialization complete');
+    }, 100);
   }
 
   private async loadModel(modelName: string) {
@@ -131,9 +139,15 @@ class ExoplanetClassifier {
   }
 
   private setupEventListeners() {
+    console.log('Setting up event listeners...');
+    
     // Model selection buttons
-    document.querySelectorAll('.model-option').forEach(option => {
+    const modelOptions = document.querySelectorAll('.model-option');
+    console.log('Found model options:', modelOptions.length);
+    
+    modelOptions.forEach(option => {
       option.addEventListener('click', (e) => {
+        console.log('Model option clicked');
         const target = e.currentTarget as HTMLElement;
         const modelName = target.dataset.model!;
         
@@ -147,8 +161,12 @@ class ExoplanetClassifier {
     });
 
     // Input type toggle buttons
-    document.querySelectorAll('.toggle-btn').forEach(btn => {
+    const toggleButtons = document.querySelectorAll('.toggle-btn');
+    console.log('Found toggle buttons:', toggleButtons.length);
+    
+    toggleButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
+        console.log('Toggle button clicked');
         const target = e.target as HTMLElement;
         const type = target.dataset.type!;
         
@@ -171,8 +189,12 @@ class ExoplanetClassifier {
     });
 
     // Sample buttons
-    document.querySelectorAll('.sample-btn').forEach(btn => {
+    const sampleButtons = document.querySelectorAll('.sample-btn');
+    console.log('Found sample buttons:', sampleButtons.length);
+    
+    sampleButtons.forEach(btn => {
       btn.addEventListener('click', (e) => {
+        console.log('Sample button clicked');
         const target = e.target as HTMLElement;
         const type = target.dataset.type!;
         this.makeSamplePrediction(type);
@@ -180,12 +202,20 @@ class ExoplanetClassifier {
     });
 
     // Manual prediction button
-    document.getElementById('manual-predict')?.addEventListener('click', () => {
+    const manualPredictBtn = document.getElementById('manual-predict');
+    console.log('Found manual predict button:', !!manualPredictBtn);
+    
+    manualPredictBtn?.addEventListener('click', () => {
+      console.log('Manual predict button clicked');
       this.makeManualPrediction();
     });
 
     // Confusion matrix button
-    document.getElementById('show-confusion-matrix')?.addEventListener('click', () => {
+    const confusionMatrixBtn = document.getElementById('show-confusion-matrix');
+    console.log('Found confusion matrix button:', !!confusionMatrixBtn);
+    
+    confusionMatrixBtn?.addEventListener('click', () => {
+      console.log('Confusion matrix button clicked');
       this.showConfusionMatrix();
     });
 
@@ -750,8 +780,26 @@ class ExoplanetClassifier {
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM Content Loaded');
   createStarfield();
-  new ExoplanetClassifier();
+  
+  // Add a small delay to ensure DOM is fully rendered
+  setTimeout(() => {
+    console.log('Initializing ExoplanetClassifier...');
+    new ExoplanetClassifier();
+  }, 100);
+});
+
+// Also try with window.onload as fallback
+window.addEventListener('load', () => {
+  console.log('Window loaded');
+  // Check if ExoplanetClassifier was already initialized
+  if (!document.querySelector('.model-option.selected')) {
+    console.log('Fallback initialization');
+    setTimeout(() => {
+      new ExoplanetClassifier();
+    }, 200);
+  }
 });
 
 // Create animated starfield background
