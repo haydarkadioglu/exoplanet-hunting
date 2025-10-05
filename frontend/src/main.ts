@@ -42,11 +42,25 @@ class ExoplanetClassifier {
   private currentModel: string = 'tess';
 
   constructor() {
-    this.init();
+    console.log('ExoplanetClassifier constructor called');
+    
+    // If DOM is already loaded, initialize immediately
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      console.log('DOM already ready, initializing...');
+      this.init();
+    } else {
+      // Wait for DOM to be ready
+      console.log('Waiting for DOM to be ready...');
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOMContentLoaded event fired');
+        this.init();
+      });
+    }
   }
 
   private async init() {
     console.log('Initializing ExoplanetClassifier...');
+    console.log('Document ready state:', document.readyState);
     
     // Load all models in parallel
     const loadPromises = Object.keys(this.models).map(modelName => 
@@ -56,11 +70,31 @@ class ExoplanetClassifier {
     await Promise.allSettled(loadPromises);
     console.log('Models loaded, setting up event listeners...');
     
-    // Use setTimeout to ensure DOM is ready
+    // Check DOM elements first
     setTimeout(() => {
+      console.log('Checking DOM elements...');
+      const modelOptions = document.querySelectorAll('.model-option');
+      const autoFillButtons = document.querySelectorAll('.auto-fill-btn');
+      const manualPredictBtn = document.getElementById('manual-predict');
+      
+      console.log('Model options found:', modelOptions.length);
+      console.log('Auto-fill buttons found:', autoFillButtons.length);
+      console.log('Manual predict button found:', !!manualPredictBtn);
+      
+      if (modelOptions.length === 0) {
+        console.error('❌ No model options found!');
+      }
+      if (autoFillButtons.length === 0) {
+        console.error('❌ No auto-fill buttons found!');
+      }
+      if (!manualPredictBtn) {
+        console.error('❌ Manual predict button not found!');
+      }
+      
       this.setupEventListeners();
+      this.setupScrollHeader();
       this.updateModelInfo('tess'); // Default to TESS
-      console.log('Initialization complete');
+      console.log('✅ Initialization complete');
     }, 100);
   }
 
@@ -141,15 +175,26 @@ class ExoplanetClassifier {
   private setupEventListeners() {
     console.log('Setting up event listeners...');
     
+    // Wait a bit more for DOM to be ready
+    setTimeout(() => {
+      this.initializeEventListeners();
+    }, 500);
+  }
+
+  private initializeEventListeners() {
+    console.log('Initializing event listeners...');
+    
     // Model selection buttons
     const modelOptions = document.querySelectorAll('.model-option');
     console.log('Found model options:', modelOptions.length);
     
-    modelOptions.forEach(option => {
+    modelOptions.forEach((option, index) => {
+      console.log(`Setting up model option ${index}:`, option);
       option.addEventListener('click', (e) => {
         console.log('Model option clicked');
         const target = e.currentTarget as HTMLElement;
         const modelName = target.dataset.model!;
+        console.log('Selected model:', modelName);
         
         // Update selected model
         document.querySelectorAll('.model-option').forEach(opt => opt.classList.remove('selected'));
@@ -160,43 +205,17 @@ class ExoplanetClassifier {
       });
     });
 
-    // Input type toggle buttons - removed since we only have manual input now
-    // const toggleButtons = document.querySelectorAll('.toggle-btn');
-    // console.log('Found toggle buttons:', toggleButtons.length);
-    
-    // toggleButtons.forEach(btn => {
-    //   btn.addEventListener('click', (e) => {
-    //     console.log('Toggle button clicked');
-    //     const target = e.target as HTMLElement;
-    //     const type = target.dataset.type!;
-        
-    //     // Update active button
-    //     document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-    //     target.classList.add('active');
-        
-    //     // Show/hide input sections
-    //     const sampleData = document.querySelector('.sample-data');
-    //     const manualInput = document.querySelector('.manual-input');
-        
-    //     if (type === 'sample') {
-    //       sampleData?.classList.add('active');
-    //       manualInput?.classList.remove('active');
-    //     } else {
-    //       sampleData?.classList.remove('active');
-    //       manualInput?.classList.add('active');
-    //     }
-    //   });
-    // });
-
     // Auto-fill buttons for manual input
     const autoFillButtons = document.querySelectorAll('.auto-fill-btn');
     console.log('Found auto-fill buttons:', autoFillButtons.length);
     
-    autoFillButtons.forEach(btn => {
+    autoFillButtons.forEach((btn, index) => {
+      console.log(`Setting up auto-fill button ${index}:`, btn);
       btn.addEventListener('click', (e) => {
         console.log('Auto-fill button clicked');
         const target = e.target as HTMLElement;
         const type = target.dataset.type!;
+        console.log('Auto-fill type:', type);
         this.autoFillFormData(type);
       });
     });
@@ -205,33 +224,87 @@ class ExoplanetClassifier {
     const manualPredictBtn = document.getElementById('manual-predict');
     console.log('Found manual predict button:', !!manualPredictBtn);
     
-    manualPredictBtn?.addEventListener('click', () => {
-      console.log('Manual predict button clicked');
-      this.makeManualPrediction();
-    });
+    if (manualPredictBtn) {
+      manualPredictBtn.addEventListener('click', () => {
+        console.log('Manual predict button clicked');
+        this.makeManualPrediction();
+      });
+    } else {
+      console.error('Manual predict button not found!');
+    }
 
     // Confusion matrix button
     const confusionMatrixBtn = document.getElementById('show-confusion-matrix');
     console.log('Found confusion matrix button:', !!confusionMatrixBtn);
     
-    confusionMatrixBtn?.addEventListener('click', () => {
-      console.log('Confusion matrix button clicked');
-      this.showConfusionMatrix();
-    });
+    if (confusionMatrixBtn) {
+      confusionMatrixBtn.addEventListener('click', () => {
+        console.log('Confusion matrix button clicked');
+        this.showConfusionMatrix();
+      });
+    } else {
+      console.error('Confusion matrix button not found!');
+    }
 
     // Modal close functionality
     const modal = document.getElementById('confusion-matrix-modal');
     const closeBtn = document.querySelector('.close');
     
-    closeBtn?.addEventListener('click', () => {
-      if (modal) modal.style.display = 'none';
-    });
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        if (modal) modal.style.display = 'none';
+      });
+    }
 
     window.addEventListener('click', (event) => {
       if (event.target === modal) {
         if (modal) modal.style.display = 'none';
       }
     });
+
+    console.log('Event listeners setup complete');
+  }
+
+  private setupScrollHeader() {
+    console.log('Setting up scroll header...');
+    const header = document.querySelector('.header');
+    if (!header) {
+      console.error('Header not found!');
+      return;
+    }
+
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+
+    const updateHeader = () => {
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY > 100) {
+        if (currentScrollY > lastScrollY) {
+          // Scrolling down - hide header
+          header.classList.add('header-hidden');
+        } else {
+          // Scrolling up - show header
+          header.classList.remove('header-hidden');
+        }
+      } else {
+        // At top - always show header
+        header.classList.remove('header-hidden');
+      }
+      
+      lastScrollY = currentScrollY;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(updateHeader);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    console.log('Scroll header setup complete');
   }
 
   private updateModelInfo(modelName: string) {
