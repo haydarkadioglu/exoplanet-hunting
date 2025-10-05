@@ -1,0 +1,34 @@
+{
+  "name": "exoplanet-hunting",
+  "version": "1.0.0",
+  "description": "NASA Exoplanet Classification AI - Developed by Kozmik Zihinler (Cosmic Minds) Team",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/haydarkadioglu/exoplanet-hunting.git"
+  },
+  "keywords": ["nasa", "exoplanet", "ai", "classification", "onnx", "machine-learning", "space-apps", "kozmik-zihinler", "cosmic-minds"],
+  "author": "Kozmik Zihinler (Cosmic Minds) Team",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/haydarkadioglu/exoplanet-hunting/issues"
+  },
+  "homepage": "https://github.com/haydarkadioglu/exoplanet-hunting#readme",
+  "dependencies": {
+    "@types/node": "^24.6.2",
+    "onnxruntime-web": "^1.23.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
+  },
+  "devDependencies": {
+    "@types/dom-to-image": "^2.6.7",
+    "@types/w3c-web-usb": "^1.0.13"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "model_name": "LightGBM_Direct",
+  "model_type": "LGBMClassifier",
+  "f1_macro_score": 0.9546254860625832,
+  "accuracy_score": 0.978776529338327,
+  "training_date": "2025-10-05 01:05:35",
+  "dataset": "K2 3-Class",
+  "classes": [
+    "Candidate",
+    "Confirmed",
+    "False_Positive"
+  ],
+  "class_mapping": {
+    "0": "Candidate",
+    "1": "Confirmed",
+    "2": "False_Positive"
+  },
+  "features_count": 145,
+  "training_samples": 3203,
+  "test_samples": 801,
+  "preprocessing_pipeline": "vol1_3class"
+}

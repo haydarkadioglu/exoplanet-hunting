@@ -1,0 +1,120 @@
+{
+  "model_info": {
+    "dataset": "TESS",
+    "model_type": "LGBMClassifier",
+    "f1_macro_score": 0.6744943481331678,
+    "accuracy_score": 0.7689811810512654,
+    "training_date": "2025-10-05 09:20:34",
+    "features_count": 64,
+    "training_samples": 6162,
+    "onnx_model_type": "LGBMClassifier"
+  },
+  "deployment_info": {
+    "onnx_opset_version": 11,
+    "input_shape": [
+      null,
+      64
+    ],
+    "input_type": "float32",
+    "output_classes": [
+      "Candidate",
+      "Confirmed",
+      "False_Positive"
+    ],
+    "class_mapping": {
+      "0": "Candidate",
+      "1": "Confirmed",
+      "2": "False_Positive"
+    },
+    "feature_names": [
+      "ra",
+      "dec",
+      "st_pmra",
+      "st_pmraerr1",
+      "st_pmraerr2",
+      "st_pmralim",
+      "st_pmrasymerr",
+      "st_pmdec",
+      "st_pmdecerr1",
+      "st_pmdecerr2",
+      "st_pmdeclim",
+      "st_pmdecsymerr",
+      "pl_tranmid",
+      "pl_tranmiderr1",
+      "pl_tranmiderr2",
+      "pl_tranmidlim",
+      "pl_tranmidsymerr",
+      "pl_orbper",
+      "pl_orbpererr1",
+      "pl_orbpererr2",
+      "pl_orbperlim",
+      "pl_orbpersymerr",
+      "pl_trandurh",
+      "pl_trandurherr1",
+      "pl_trandurherr2",
+      "pl_trandurhlim",
+      "pl_trandurhsymerr",
+      "pl_trandep",
+      "pl_trandeperr1",
+      "pl_trandeperr2",
+      "pl_trandeplim",
+      "pl_trandepsymerr",
+      "pl_rade",
+      "pl_radeerr1",
+      "pl_radeerr2",
+      "pl_radelim",
+      "pl_radesymerr",
+      "pl_insol",
+      "pl_eqt",
+      "st_tmag",
+      "st_tmagerr1",
+      "st_tmagerr2",
+      "st_tmaglim",
+      "st_tmagsymerr",
+      "st_dist",
+      "st_disterr1",
+      "st_disterr2",
+      "st_distlim",
+      "st_distsymerr",
+      "st_teff",
+      "st_tefferr1",
+      "st_tefferr2",
+      "st_tefflim",
+      "st_teffsymerr",
+      "st_logg",
+      "st_loggerr1",
+      "st_loggerr2",
+      "st_logglim",
+      "st_loggsymerr",
+      "st_rad",
+      "st_raderr1",
+      "st_raderr2",
+      "st_radlim",
+      "st_radsymerr"
+    ]
+  },
+  "usage_example": {
+    "python": {
+      "import": [
+        "import onnxruntime as ort",
+        "import numpy as np"
+      ],
+      "load_model": "session = ort.InferenceSession('tess_model.onnx')",
+      "load_scaler": "scaler_session = ort.InferenceSession('tess_scaler.onnx')",
+      "predict": [
+        "# Scale input data first",
+        "scaled_data = scaler_session.run(None, {'float_input': your_data})[0]",
+        "# Make prediction",
+        "prediction = session.run(None, {'float_input': scaled_data})[0]"
+      ]
+    },
+    "javascript": {
+      "library": "onnxjs or onnxruntime-web",
+      "note": "Can be used in web browsers with WebAssembly"
+    },
+    "csharp": {
+      "library": "Microsoft.ML.OnnxRuntime",
+      "note": "For .NET applications"
+    }
+  }
+}
