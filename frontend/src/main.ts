@@ -175,94 +175,135 @@ class ExoplanetClassifier {
   private setupEventListeners() {
     console.log('Setting up event listeners...');
     
-    // Wait a bit more for DOM to be ready
-    setTimeout(() => {
-      this.initializeEventListeners();
-    }, 500);
+    // Use a more robust approach for production
+    const initializeWhenReady = () => {
+      const modelOptions = document.querySelectorAll('.model-option');
+      const autoFillButtons = document.querySelectorAll('.auto-fill-btn');
+      const manualPredictBtn = document.getElementById('manual-predict');
+      const confusionMatrixBtn = document.getElementById('show-confusion-matrix');
+      
+      if (modelOptions.length > 0 && autoFillButtons.length > 0 && manualPredictBtn && confusionMatrixBtn) {
+        console.log('DOM elements ready, initializing event listeners...');
+        this.initializeEventListeners();
+      } else {
+        console.log('DOM not ready yet, retrying in 100ms...');
+        setTimeout(initializeWhenReady, 100);
+      }
+    };
+    
+    initializeWhenReady();
   }
 
   private initializeEventListeners() {
     console.log('Initializing event listeners...');
     
-    // Model selection buttons
-    const modelOptions = document.querySelectorAll('.model-option');
-    console.log('Found model options:', modelOptions.length);
-    
-    modelOptions.forEach((option, index) => {
-      console.log(`Setting up model option ${index}:`, option);
-      option.addEventListener('click', (e) => {
-        console.log('Model option clicked');
-        const target = e.currentTarget as HTMLElement;
-        const modelName = target.dataset.model!;
-        console.log('Selected model:', modelName);
-        
-        // Update selected model
-        document.querySelectorAll('.model-option').forEach(opt => opt.classList.remove('selected'));
-        target.classList.add('selected');
-        
-        this.currentModel = modelName;
-        this.updateModelInfo(modelName);
+    try {
+      // Model selection buttons
+      const modelOptions = document.querySelectorAll('.model-option');
+      console.log('Found model options:', modelOptions.length);
+      
+      modelOptions.forEach((option, index) => {
+        try {
+          console.log(`Setting up model option ${index}:`, option);
+          option.addEventListener('click', (e) => {
+            console.log('Model option clicked');
+            const target = e.currentTarget as HTMLElement;
+            const modelName = target.dataset.model!;
+            console.log('Selected model:', modelName);
+            
+            // Update selected model
+            document.querySelectorAll('.model-option').forEach(opt => opt.classList.remove('selected'));
+            target.classList.add('selected');
+            
+            this.currentModel = modelName;
+            this.updateModelInfo(modelName);
+          });
+        } catch (error) {
+          console.error(`Failed to setup model option ${index}:`, error);
+        }
       });
-    });
 
-    // Auto-fill buttons for manual input
-    const autoFillButtons = document.querySelectorAll('.auto-fill-btn');
-    console.log('Found auto-fill buttons:', autoFillButtons.length);
-    
-    autoFillButtons.forEach((btn, index) => {
-      console.log(`Setting up auto-fill button ${index}:`, btn);
-      btn.addEventListener('click', (e) => {
-        console.log('Auto-fill button clicked');
-        const target = e.target as HTMLElement;
-        const type = target.dataset.type!;
-        console.log('Auto-fill type:', type);
-        this.autoFillFormData(type);
+      // Auto-fill buttons for manual input
+      const autoFillButtons = document.querySelectorAll('.auto-fill-btn');
+      console.log('Found auto-fill buttons:', autoFillButtons.length);
+      
+      autoFillButtons.forEach((btn, index) => {
+        try {
+          console.log(`Setting up auto-fill button ${index}:`, btn);
+          btn.addEventListener('click', (e) => {
+            console.log('Auto-fill button clicked');
+            const target = e.target as HTMLElement;
+            const type = target.dataset.type!;
+            console.log('Auto-fill type:', type);
+            this.autoFillFormData(type);
+          });
+        } catch (error) {
+          console.error(`Failed to setup auto-fill button ${index}:`, error);
+        }
       });
-    });
 
-    // Manual prediction button
-    const manualPredictBtn = document.getElementById('manual-predict');
-    console.log('Found manual predict button:', !!manualPredictBtn);
-    
-    if (manualPredictBtn) {
-      manualPredictBtn.addEventListener('click', () => {
-        console.log('Manual predict button clicked');
-        this.makeManualPrediction();
-      });
-    } else {
-      console.error('Manual predict button not found!');
-    }
-
-    // Confusion matrix button
-    const confusionMatrixBtn = document.getElementById('show-confusion-matrix');
-    console.log('Found confusion matrix button:', !!confusionMatrixBtn);
-    
-    if (confusionMatrixBtn) {
-      confusionMatrixBtn.addEventListener('click', () => {
-        console.log('Confusion matrix button clicked');
-        this.showConfusionMatrix();
-      });
-    } else {
-      console.error('Confusion matrix button not found!');
-    }
-
-    // Modal close functionality
-    const modal = document.getElementById('confusion-matrix-modal');
-    const closeBtn = document.querySelector('.close');
-    
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        if (modal) modal.style.display = 'none';
-      });
-    }
-
-    window.addEventListener('click', (event) => {
-      if (event.target === modal) {
-        if (modal) modal.style.display = 'none';
+      // Manual prediction button
+      const manualPredictBtn = document.getElementById('manual-predict');
+      console.log('Found manual predict button:', !!manualPredictBtn);
+      
+      if (manualPredictBtn) {
+        try {
+          manualPredictBtn.addEventListener('click', () => {
+            console.log('Manual predict button clicked');
+            this.makeManualPrediction();
+          });
+        } catch (error) {
+          console.error('Failed to setup manual predict button:', error);
+        }
+      } else {
+        console.error('Manual predict button not found!');
       }
-    });
 
-    console.log('Event listeners setup complete');
+      // Confusion matrix button
+      const confusionMatrixBtn = document.getElementById('show-confusion-matrix');
+      console.log('Found confusion matrix button:', !!confusionMatrixBtn);
+      
+      if (confusionMatrixBtn) {
+        try {
+          confusionMatrixBtn.addEventListener('click', () => {
+            console.log('Confusion matrix button clicked');
+            this.showConfusionMatrix();
+          });
+        } catch (error) {
+          console.error('Failed to setup confusion matrix button:', error);
+        }
+      } else {
+        console.error('Confusion matrix button not found!');
+      }
+
+      // Modal close functionality
+      const modal = document.getElementById('confusion-matrix-modal');
+      const closeBtn = document.querySelector('.close');
+      
+      if (closeBtn) {
+        try {
+          closeBtn.addEventListener('click', () => {
+            if (modal) modal.style.display = 'none';
+          });
+        } catch (error) {
+          console.error('Failed to setup modal close button:', error);
+        }
+      }
+
+      try {
+        window.addEventListener('click', (event) => {
+          if (event.target === modal) {
+            if (modal) modal.style.display = 'none';
+          }
+        });
+      } catch (error) {
+        console.error('Failed to setup window click listener:', error);
+      }
+
+      console.log('Event listeners setup complete');
+    } catch (error) {
+      console.error('Failed to initialize event listeners:', error);
+    }
   }
 
   private setupScrollHeader() {
@@ -965,27 +1006,53 @@ class ExoplanetClassifier {
 }
 
 // Initialize the application
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM Content Loaded');
+const initApp = () => {
+  console.log('Initializing application...');
   createStarfield();
   setupScrollHeader();
   
-  // Add a small delay to ensure DOM is fully rendered
-  setTimeout(() => {
-    console.log('Initializing ExoplanetClassifier...');
-    new ExoplanetClassifier();
-  }, 100);
-});
+  // Ensure DOM is fully ready
+  const checkDOMReady = () => {
+    const requiredElements = [
+      document.querySelector('.model-option'),
+      document.getElementById('manual-predict'),
+      document.getElementById('show-confusion-matrix'),
+      document.querySelector('.auto-fill-btn')
+    ];
+    
+    const allElementsReady = requiredElements.every(el => el !== null);
+    
+    if (allElementsReady) {
+      console.log('DOM elements ready, creating ExoplanetClassifier...');
+      try {
+        new ExoplanetClassifier();
+      } catch (error) {
+        console.error('Failed to create ExoplanetClassifier:', error);
+      }
+    } else {
+      console.log('DOM not ready yet, retrying in 100ms...');
+      setTimeout(checkDOMReady, 100);
+    }
+  };
+  
+  checkDOMReady();
+};
 
-// Also try with window.onload as fallback
+// Try multiple initialization methods
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  // DOM is already loaded
+  initApp();
+}
+
+// Fallback with window load
 window.addEventListener('load', () => {
-  console.log('Window loaded');
-  // Check if ExoplanetClassifier was already initialized
+  console.log('Window loaded - checking if app initialized');
+  // Check if app was already initialized
   if (!document.querySelector('.model-option.selected')) {
-    console.log('Fallback initialization');
-    setTimeout(() => {
-      new ExoplanetClassifier();
-    }, 200);
+    console.log('App not initialized, running fallback...');
+    setTimeout(initApp, 200);
   }
 });
 
