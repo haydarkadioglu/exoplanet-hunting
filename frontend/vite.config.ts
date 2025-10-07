@@ -1,10 +1,16 @@
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  base: '/exoplanet-hunting/',
+  base: '/',
   root: '.',
   build: {
     outDir: 'dist',
+    minify: false, // Disable minification for debugging
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
   },
   server: {
     port: 3000,
