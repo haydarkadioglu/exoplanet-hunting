@@ -70,9 +70,14 @@ class ExoplanetClassifier {
     await Promise.allSettled(loadPromises);
     console.log('Models loaded, setting up event listeners...');
     
-    // Check DOM elements first
-    setTimeout(() => {
-      console.log('Checking DOM elements...');
+    // Multiple attempts to ensure DOM is ready
+    let attempts = 0;
+    const maxAttempts = 20;
+    
+    const setupWithRetry = () => {
+      attempts++;
+      console.log(`Setup attempt ${attempts}/${maxAttempts}`);
+      
       const modelOptions = document.querySelectorAll('.model-option');
       const autoFillButtons = document.querySelectorAll('.auto-fill-btn');
       const manualPredictBtn = document.getElementById('manual-predict');
@@ -81,21 +86,41 @@ class ExoplanetClassifier {
       console.log('Auto-fill buttons found:', autoFillButtons.length);
       console.log('Manual predict button found:', !!manualPredictBtn);
       
-      if (modelOptions.length === 0) {
-        console.error('❌ No model options found!');
+      if (modelOptions.length >= 3 && autoFillButtons.length > 0 && manualPredictBtn) {
+        console.log('✅ All required elements found, setting up listeners...');
+        this.setupEventListeners();
+        this.setupScrollHeader();
+        this.updateModelInfo('tess'); // Default to TESS
+        console.log('✅ Initialization complete');
+        
+        // Test model buttons immediately
+        this.testModelButtons();
+        return true;
+      } else if (attempts < maxAttempts) {
+        console.log(`❌ Missing elements, retrying in ${attempts * 100}ms...`);
+        setTimeout(setupWithRetry, attempts * 100);
+        return false;
+      } else {
+        console.error('❌ Failed to find all required DOM elements after', maxAttempts, 'attempts');
+        // Force setup anyway
+        this.setupEventListeners();
+        this.setupScrollHeader();
+        this.updateModelInfo('tess');
+        return false;
       }
-      if (autoFillButtons.length === 0) {
-        console.error('❌ No auto-fill buttons found!');
-      }
-      if (!manualPredictBtn) {
-        console.error('❌ Manual predict button not found!');
-      }
-      
-      this.setupEventListeners();
-      this.setupScrollHeader();
-      this.updateModelInfo('tess'); // Default to TESS
-      console.log('✅ Initialization complete');
-    }, 100);
+    };
+    
+    setupWithRetry();
+  }
+
+  private testModelButtons() {
+    console.log('Testing model buttons...');
+    const modelOptions = document.querySelectorAll('.model-option');
+    modelOptions.forEach((option, index) => {
+      const modelName = (option as HTMLElement).dataset.model;
+      const hasListener = (option as HTMLElement).onclick !== null;
+      console.log(`Model button ${index}: ${modelName}, has click listener: ${hasListener}`);
+    });
   }
 
   private async loadModel(modelName: string) {
@@ -198,25 +223,54 @@ class ExoplanetClassifier {
     console.log('Initializing event listeners...');
     
     try {
-      // Model selection buttons
+      // Model selection buttons - Use more robust event delegation
       const modelOptions = document.querySelectorAll('.model-option');
       console.log('Found model options:', modelOptions.length);
       
+      // Add global click handler for model options
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const modelOption = target.closest('.model-option') as HTMLElement;
+        
+        if (modelOption && modelOption.dataset.model) {
+          console.log('Model option clicked via delegation');
+          const modelName = modelOption.dataset.model;
+          console.log('Selected model:', modelName);
+          
+          // Update selected model
+          document.querySelectorAll('.model-option').forEach(opt => opt.classList.remove('selected'));
+          modelOption.classList.add('selected');
+          
+          this.currentModel = modelName;
+          this.updateModelInfo(modelName);
+          
+          // Prevent default action
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      });
+      
+      // Backup direct event listeners
       modelOptions.forEach((option, index) => {
         try {
           console.log(`Setting up model option ${index}:`, option);
+          const modelName = (option as HTMLElement).dataset.model;
+          
           option.addEventListener('click', (e) => {
-            console.log('Model option clicked');
-            const target = e.currentTarget as HTMLElement;
-            const modelName = target.dataset.model!;
+            console.log('Model option clicked directly');
             console.log('Selected model:', modelName);
             
-            // Update selected model
-            document.querySelectorAll('.model-option').forEach(opt => opt.classList.remove('selected'));
-            target.classList.add('selected');
+            if (modelName) {
+              // Update selected model
+              document.querySelectorAll('.model-option').forEach(opt => opt.classList.remove('selected'));
+              option.classList.add('selected');
+              
+              this.currentModel = modelName;
+              this.updateModelInfo(modelName);
+            }
             
-            this.currentModel = modelName;
-            this.updateModelInfo(modelName);
+            e.preventDefault();
+            e.stopPropagation();
           });
         } catch (error) {
           console.error(`Failed to setup model option ${index}:`, error);
@@ -1011,8 +1065,14 @@ const initApp = () => {
   createStarfield();
   setupScrollHeader();
   
-  // Ensure DOM is fully ready
+  // Multiple attempts to ensure DOM is fully ready
+  let domCheckAttempts = 0;
+  const maxDOMAttempts = 50; // 5 seconds max
+  
   const checkDOMReady = () => {
+    domCheckAttempts++;
+    console.log(`DOM check attempt ${domCheckAttempts}/${maxDOMAttempts}`);
+    
     const requiredElements = [
       document.querySelector('.model-option'),
       document.getElementById('manual-predict'),
@@ -1020,18 +1080,42 @@ const initApp = () => {
       document.querySelector('.auto-fill-btn')
     ];
     
-    const allElementsReady = requiredElements.every(el => el !== null);
+    const modelOptions = document.querySelectorAll('.model-option');
+    const allElementsReady = requiredElements.every(el => el !== null) && modelOptions.length >= 3;
+    
+    console.log('Required elements check:', {
+      modelOption: !!document.querySelector('.model-option'),
+      manualPredict: !!document.getElementById('manual-predict'),
+      confusionMatrix: !!document.getElementById('show-confusion-matrix'),
+      autoFillBtn: !!document.querySelector('.auto-fill-btn'),
+      modelOptionsCount: modelOptions.length
+    });
     
     if (allElementsReady) {
-      console.log('DOM elements ready, creating ExoplanetClassifier...');
+      console.log('✅ DOM elements ready, creating ExoplanetClassifier...');
       try {
         new ExoplanetClassifier();
       } catch (error) {
         console.error('Failed to create ExoplanetClassifier:', error);
+        // Force retry one more time
+        setTimeout(() => {
+          try {
+            new ExoplanetClassifier();
+          } catch (retryError) {
+            console.error('Retry also failed:', retryError);
+          }
+        }, 1000);
       }
-    } else {
-      console.log('DOM not ready yet, retrying in 100ms...');
+    } else if (domCheckAttempts < maxDOMAttempts) {
+      console.log(`DOM not ready yet, retrying in 100ms... (${domCheckAttempts}/${maxDOMAttempts})`);
       setTimeout(checkDOMReady, 100);
+    } else {
+      console.error('❌ DOM elements not ready after maximum attempts, forcing initialization...');
+      try {
+        new ExoplanetClassifier();
+      } catch (error) {
+        console.error('Forced initialization failed:', error);
+      }
     }
   };
   
